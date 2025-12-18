@@ -3,7 +3,7 @@
 // Name:        facefull.css
 // Purpose:     Main Facefull style
 // Author:      Nickolay Babbysh
-// Version:     1.0.0
+// Version:     1.0.3
 // Copyright:   (c) NickWare Group
 // Licence:     MIT
 /////////////////////////////////////////////////////////////////////////////
@@ -807,16 +807,8 @@ canvas {
     position: relative;
     display: block;
     margin-right: -7px;
-    /*transition: 0.1s;*/
-    /*padding-bottom: 40px;*/
     padding-bottom: 1px;
-    /*margin-top: 0 !important;*/
     padding-top: 20px !important;
-    transition: 0.1s;
-}
-
-.GlobalArea.Touch .Scrolldata {
-    transition: none;
 }
 
 .GlobalArea.Touch .Scrollbar-block {
