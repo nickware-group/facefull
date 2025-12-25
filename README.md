@@ -10,7 +10,8 @@ Not a framework. No dependencies. Just a library.
 
 30+ UI controls (buttons, lists, switches, tabs, scrollboxes, progressbars, etc) based on JS. Build your web apps or native desktop apps with Facefull.
 
-[facefull official page](https://nickware.group/products/facefull)
+[facefull official page](https://nickware.group/products/facefull)<br>
+[web app demo page](https://nickware.group/repository/products/ff/demo)
 
 ----------------------------------------------------------------
 ### LICENCE
