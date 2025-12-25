@@ -2,8 +2,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        facefull.css
 // Purpose:     Main Facefull style
-// Author:      Nickolay Babbysh
-// Version:     1.0.3
+// Author:      Nickolay Babich
+// Version:     1.0.4
 // Copyright:   (c) NickWare Group
 // Licence:     MIT
 /////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ MobileActionButton
     --main-warning-color: #ffd700;
     --main-error-color: #b22222;
     --main-caution-color: #fd5954;
-    --main-popup-bg-color: var(--nw-dark-color);
+    --main-popup-bg-color: rgba(7, 7, 7, 0.7);
 
     --windowheader-bg-color: #0f273d;
     --windowheader-control-hover-color: var(--nw-blue-color);
@@ -87,7 +87,7 @@ MobileActionButton
     --boxtitle-font-color: #888;
     --scrollbox-bg-color: #262e3c;
     --scrollbar-bg-color: #000e17b7;
-    --mainmenu-bg-color: #212a39;
+    --mainmenu-bg-color: #222a36;
     --button-highlighted-bg-color: #2a618a;
     --button-highlighted-bg-hover-color: #224c71;
     --progressbar-bg-color: #14222f;
@@ -1553,7 +1553,8 @@ input[type="checkbox"]:checked + .Toggle span:before {
     overflow: hidden;
     z-index: 1000;
     font-size: 12px;
-    box-shadow: 0 0 8px #51515112;
+    box-shadow: 0 0 3px #00000063;
+    backdrop-filter: blur(5px);
 }
 
 .PopupMenu > ul {
@@ -1871,8 +1872,8 @@ label.Search:before {
     text-align: center;
     padding: 10px;
     font-size: 11px;
-    opacity: 0.9;
     box-shadow: 0 0 3px #0f0f0f33;
+    backdrop-filter: blur(5px);
 }
 
 /*============================ PulseChart ============================*/

@@ -2,8 +2,8 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        theme-light.css
 // Purpose:     Facefull light theme style
-// Author:      Nickolay Babbysh
-// Version:     0.9.7
+// Author:      Nickolay Babich
+// Version:     1.0.4
 // Copyright:   (c) NickWare Group
 // Licence:     MIT
 /////////////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
     --main-warning-color: #ffd700;
     --main-error-color: #b22222;
     --main-caution-color: #fd5954;
-    --main-popup-bg-color: #e9e8ff;
+    --main-popup-bg-color: rgba(233, 232, 255, 0.5);
 
     --windowheader-bg-color: #aaa;
     --windowheader-control-hover-color: var(--nw-blue-color);
