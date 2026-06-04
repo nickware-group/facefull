@@ -2,7 +2,7 @@
 // Name:        facefull.js
 // Purpose:     Main Facefull module
 // Author:      Nickolay Babich
-// Version:     1.0.4
+// Version:     1.2.0
 // Copyright:   (c) NickWare Group
 // Licence:     MIT
 /////////////////////////////////////////////////////////////////////////////
@@ -425,6 +425,11 @@ function Facefull(native = false) {
             this.ItemPickers[did] = new List(itempickers[i], "picker");
         }
 
+        let touchblocks = document.querySelectorAll(".TouchScrollBlockHorizontal");
+        for (let i = 0; i < touchblocks.length; i++) {
+            new TouchScrollBlockHorizontal(touchblocks[i]);
+        }
+
         window.addEventListener("mousedown", bind(function(event) {
             this.doCloseAllPopup(event);
         }, this));
@@ -736,6 +741,9 @@ function Scrollbox(e) {
     this.escrollbox = e;
     this.escrolldata = e.children[0];
     this.lasttouchshift = 0;
+    this.touch_scroll_frames = []
+    this.touch_scroll_time = 0;
+    this.touch_velocity = 0;
 
     this.doCreateScrollbar = function() {
         this.escrollbarblock = document.createElement("div");
@@ -795,7 +803,7 @@ function Scrollbox(e) {
 
     this.onWheelScrollbar = function(event) {
         facefull.doCloseGlobalPopupMenu();
-        let d = 60;
+        let d = 20;
         event = event || window.event;
         let ep = event.target;
         let hasnested = false;
@@ -860,6 +868,9 @@ function Scrollbox(e) {
         let touches = event.changedTouches;
         if (touches.length >= 0) {
             this.lasttouchshift = touches[0].pageY;
+            this.touch_scroll_time = performance.now();
+            this.touch_velocity = 0
+            this.touch_scroll_frames = []
         }
     };
 
@@ -874,10 +885,41 @@ function Scrollbox(e) {
             }
             if (hasnested) return;
             if (this.escrollbartrack !== undefined) {
+                let delta_time = performance.now() - this.touch_scroll_time;
                 let delta = touches[0].pageY - this.lasttouchshift;
+
+                this.touch_scroll_frames.push(delta/delta_time);
+
+                if (this.touch_scroll_frames.length > 5) this.touch_scroll_frames.shift();
+                this.touch_scroll_time = performance.now()
+
+                // console.log(delta)
                 this.lasttouchshift = touches[0].pageY;
                 this.doMoveScrolldata(this.escrolldata.offsetTop+delta);
             } else this.doMoveScrolldata(0);
+        }
+    };
+
+    this.onTouchAnimationFrame = function() {
+        const lambda = 0.003;
+        // console.log(this.touch_velocity);
+        this.touch_velocity *= Math.exp(-lambda * 10);
+        this.doMoveScrolldata(this.escrolldata.offsetTop+this.touch_velocity*10);
+        // delta_size /= 2;
+        // if (velocity < 1) clearInterval(acc_interval);
+        if (Math.abs(this.touch_velocity) > 0.1) requestAnimationFrame(bind(this.onTouchAnimationFrame, this));
+    }
+
+    this.onTouchStopScrollbox = function(event) {
+        let touches = event.changedTouches;
+        if (!touches.length) return;
+
+        this.touch_velocity = this.touch_scroll_frames.reduce((a,b) => a+b, 0) / this.touch_scroll_frames.length;
+
+        // console.log(this.touch_velocity, this.touch_scroll_frames);
+
+        if (Math.abs(this.touch_velocity) > 0.01) {
+            requestAnimationFrame(bind(this.onTouchAnimationFrame, this));
         }
     };
 
@@ -925,6 +967,7 @@ function Scrollbox(e) {
     this.escrollbox.addEventListener("mousewheel", bind(this.onWheelScrollbar, this));
     this.escrollbox.addEventListener("touchstart", bind(this.onTouchStartScrollbox, this));
     this.escrollbox.addEventListener("touchmove", bind(this.onTouchMoveScrollbox, this));
+    this.escrollbox.addEventListener("touchend", bind(this.onTouchStopScrollbox, this));
     if (this.escrollbox.offsetHeight < this.escrolldata.offsetHeight) this.doCreateScrollbar();
     this.escrolldata.style.marginTop = "0px";
 }
@@ -1316,6 +1359,13 @@ function PopupMenu(e) {
 
 /**
  * Tooltip UI element class.
+ * Available attributes:
+ * data-tooltip-custom-name - custom tooltip id
+ * data-tooltip-text - tooltip caption
+ * data-tooltip-textid - localized text id
+ * data-tooltip-width - tooltip width
+ * data-tooltip-autohide - automatically hide tooltip after show ('1', '0'; default - '1')
+ * data-tooltip-pos - tooltip position ('left', 'right', 'bottom'; default - 'bottom')
  * @param e
  * @constructor
  */
@@ -1323,7 +1373,9 @@ function Tooltip(e) {
     this.etooltiptarget = e;
     this.edefaulttooltip = document.getElementById("TT");
     this.timer = null;
+    this.out_timer = null;
     this.touchtooltipshow = false;
+    this.tooltip_autohide = true;
     this.onCustomText = function(){};
 
     this._doTooltipInit = function() {
@@ -1332,6 +1384,10 @@ function Tooltip(e) {
         let dc = this.etooltiptarget.getAttribute("data-tooltip-text");
         let dcid = this.etooltiptarget.getAttribute("data-tooltip-textid");
         let dw = this.etooltiptarget.getAttribute("data-tooltip-width");
+
+        let autohide = this.etooltiptarget.getAttribute("data-tooltip-autohide");
+        if (autohide) this.tooltip_autohide = autohide === "1";
+
         this.edefaulttooltip.setAttribute("data-caption", "");
         this.edefaulttooltip.innerHTML = "";
         if (dcid && dcid !== "") this.edefaulttooltip.setAttribute("data-caption", dcid);
@@ -1369,11 +1425,18 @@ function Tooltip(e) {
 
         this.timer = setTimeout(bind(function() {
             this.edefaulttooltip.style.visibility = "visible";
-        }, this), 800);
+
+            if (this.tooltip_autohide) {
+                this.out_timer = setTimeout(bind(function() {
+                    this.edefaulttooltip.style.visibility = "hidden";
+                }, this), 2000);
+            }
+        }, this), 1200);
     };
 
     this.onMouseOut = function() {
         clearTimeout(this.timer);
+        clearTimeout(this.out_timer);
         this.edefaulttooltip.style.visibility = "hidden";
     };
 
@@ -1815,6 +1878,111 @@ function DropArea(e) {
 
 /*===================== Tabs =====================*/
 
+function TouchScrollBlockHorizontal(e) {
+    this.e = e;
+    this.touch_velocity = 0;
+    this.lasttouchshift = 0;
+    this.baseshift = 0;
+    this.width = 0;
+    this.container_width = 0;
+
+    this.doInit = function() {
+        this.e.addEventListener("touchstart", bind(this.onTouchStart, this));
+        this.e.addEventListener("touchmove", bind(this.onTouchMove, this));
+        this.e.addEventListener("touchend", bind(this.onTouchStop, this));
+        window.addEventListener("resize", bind(function() {
+            this.e.style.marginLeft = "0";
+        }, this));
+    }
+
+    this._doMoveBlock = function(diff) {
+        if (parseInt(this.e.style.marginLeft)+diff > 0) {
+            this.e.style.marginLeft = 0;
+            return;
+        }
+
+        let shift = -(parseInt(this.e.style.marginLeft)+diff);
+
+        if (this.width-shift+this.baseshift*2 < this.container_width) {
+            this.e.style.marginLeft = -(this.width-this.container_width+this.baseshift*2) + "px";
+            return;
+        }
+        this.e.style.marginLeft = parseInt(this.e.style.marginLeft) + diff + "px";
+    }
+
+    this.onTouchAnimationFrame = function() {
+        const lambda = 0.003;
+        this.touch_velocity *= Math.exp(-lambda * 10);
+        this._doMoveBlock(this.touch_velocity*10);
+        if (Math.abs(this.touch_velocity) > 0.1) requestAnimationFrame(bind(this.onTouchAnimationFrame, this));
+    }
+
+    this.onTouchStart = function(event) {
+        let touches = event.changedTouches;
+        if (touches.length >= 0) {
+            this.width = 0;
+            for (let i = 0; i < this.e.children.length; i++) {
+                let style = getComputedStyle(this.e.children[i]);
+                this.width += this.e.children[i].offsetWidth + parseInt(style.marginRight);
+            }
+            this.container_width = this.e.offsetWidth + parseInt(this.e.style.marginLeft);
+            this.lasttouchshift = touches[0].pageX;
+
+            this.touch_scroll_time = performance.now();
+            this.touch_velocity = 0
+            this.touch_scroll_frames = []
+
+            if (!this.baseshift) {
+                this.e.style.marginLeft = 0;
+                this.baseshift = this.e.offsetLeft;
+            }
+        }
+    }
+
+    this.onTouchMove = function(event) {
+        // console.log(this.width, this.container_width)
+        if (this.width < this.container_width) {
+            this.e.style.marginLeft = "0";
+            return;
+        }
+        let touches = event.changedTouches;
+        if (touches.length >= 0) {
+            let diff = touches[0].pageX - this.lasttouchshift;
+            this.lasttouchshift = touches[0].pageX;
+            this._doMoveBlock(diff);
+
+            let delta_time = performance.now() - this.touch_scroll_time;
+
+            this.touch_scroll_frames.push(diff/delta_time);
+
+            if (this.touch_scroll_frames.length > 5) this.touch_scroll_frames.shift();
+            this.touch_scroll_time = performance.now()
+        }
+    }
+
+    this.onTouchStop = function(event) {
+        if (this.width < this.container_width) {
+            this.e.style.marginLeft = "0";
+            return;
+        }
+
+        let touches = event.changedTouches;
+        if (!touches.length) return;
+
+        this.touch_velocity = this.touch_scroll_frames.reduce((a,b) => a+b, 0) / this.touch_scroll_frames.length;
+
+        // console.log(this.touch_velocity, this.touch_scroll_frames);
+
+        if (Math.abs(this.touch_velocity) > 0.01) {
+            requestAnimationFrame(bind(this.onTouchAnimationFrame, this));
+        }
+    };
+
+    this.doInit();
+}
+
+/*===================== Tabs =====================*/
+
 /**
  * Tabs UI element class. Use data-tabsname HTML tag to set element name.
  * @param e
@@ -1823,47 +1991,10 @@ function DropArea(e) {
 function Tabs(e) {
     this.etabs = e;
     this.elasttab = null;
-    this.lasttouchshift = 0;
-    this.baseshift = 0;
     this.width = 0;
     this.selected = -1;
 
     this.onTabChanged = function(i){};
-
-    this.onTouchStart = function(event) {
-        let touches = event.changedTouches;
-        if (touches.length >= 0) {
-            this.width = 0;
-            for (let i = 0; i < this.etabs.children.length; i++) {
-                let style = getComputedStyle(this.etabs.children[i]);
-                this.width += this.etabs.children[i].offsetWidth + parseInt(style.marginRight);
-            }
-            this.lasttouchshift = touches[0].pageX;
-            if (!this.baseshift) {
-                this.etabs.style.marginLeft = 0;
-                this.baseshift = this.etabs.offsetLeft;
-            }
-        }
-    }
-
-    this.onTouchMove = function(event) {
-        let touches = event.changedTouches;
-        if (touches.length >= 0) {
-            let diff = touches[0].pageX - this.lasttouchshift;
-            this.lasttouchshift = touches[0].pageX;
-            if (parseInt(this.etabs.style.marginLeft)+diff > 0) {
-                this.etabs.style.marginLeft = 0;
-                return;
-            }
-            let shift = -(parseInt(this.etabs.style.marginLeft)+diff);
-            //console.log((this.width-shift+this.baseshift*2)-window.innerWidth)
-            if (this.width-shift+this.baseshift*2 < window.innerWidth) {
-                this.etabs.style.marginLeft = -(this.width-window.innerWidth+this.baseshift*2) + "px";
-                return;
-            }
-            this.etabs.style.marginLeft = parseInt(this.etabs.style.marginLeft) + diff + "px";
-        }
-    }
 
     this.doInitTabs = function() {
         for (let i = 0; i < this.etabs.children.length; i++) {
@@ -1876,8 +2007,6 @@ function Tabs(e) {
             }, this);
         }
         this.etabs.style.marginLeft = 0;
-        this.etabs.addEventListener("touchstart", bind(this.onTouchStart, this));
-        this.etabs.addEventListener("touchmove", bind(this.onTouchMove, this));
     }
 
     /**
