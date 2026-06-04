@@ -3,7 +3,7 @@
 // Name:        facefull.css
 // Purpose:     Main Facefull style
 // Author:      Nickolay Babich
-// Version:     1.0.4
+// Version:     1.2.0
 // Copyright:   (c) NickWare Group
 // Licence:     MIT
 /////////////////////////////////////////////////////////////////////////////
@@ -40,6 +40,7 @@ Counter
 HotkeyHolder
 ItemPicker
 MobileActionButton
+TouchScrollBlockHorizontal
 
 */
 
@@ -65,39 +66,40 @@ MobileActionButton
     --main-font-disabled-color: #aaa;
     --main-component-bg-color: #202020;
     --main-component-bg-hover-color: #262626;
-    --main-component-disabled-bg-color: #36393f;
+    --main-component-disabled-bg-color: #1c1c1c;
     --main-component-additional-color: var(--nw-orange-color);
     --main-good-color: var(--nw-blue-color);
     --main-warning-color: #ffd700;
     --main-error-color: #b22222;
     --main-caution-color: #fd5954;
-    --main-popup-bg-color: rgba(7, 7, 7, 0.7);
+    --main-popup-bg-color: rgba(7, 7, 7, 0.63);
 
-    --windowheader-bg-color: #0f273d;
+    --windowheader-bg-color: #252525;
     --windowheader-control-hover-color: var(--nw-blue-color);
     --windowheader-controlclose-hover-color: var(--main-caution-color);
     --headerbutton-bg-color: #00000084;
     --headerbutton-bg-hover-color: #082742;
     --headerbutton-font-color: var(--main-font-color);
-    --page-bg-color: #283140;
+    --page-bg-color: #131313;
     --pagebackbutton-font-hover-color: #888;
-    --panel-bg-color: #4242422d;
-    --paneldashboard-bg-color: #00000051;
+    --panel-bg-color: #191919;
+    --paneldashboard-bg-color: #191919;
     --alert-bg-color: var(--nw-dark-color);
     --boxtitle-font-color: #888;
-    --scrollbox-bg-color: #262e3c;
-    --scrollbar-bg-color: #000e17b7;
-    --mainmenu-bg-color: #222a36;
+    --scrollbox-bg-color: #131313;
+    --scrollbar-bg-color: rgb(23, 23, 23);
+    --mainmenu-bg-color: #151617;
+    --mainmenu-mobile-bg-color: rgba(16, 16, 19, 0.83);
     --button-highlighted-bg-color: #2a618a;
     --button-highlighted-bg-hover-color: #224c71;
-    --progressbar-bg-color: #14222f;
+    --progressbar-bg-color: #8f8f8f;
     --progressbarindicator-bg-color: var(--nw-blue-color);
     --link-font-color: #0882ff;
     --link-font-hover-color: var(--nw-blue-color);
     --toggle-active-bg-color: var(--main-component-bg-color);
     --toggle-inactive-bg1-color: var(--nw-light-color);
     --toggle-inactive-bg2-color: #9a9999;
-    --list-header-font-color: #4a86b8;
+    --list-header-font-color: #a4a8af;
     --list-odd-bg-color: #5e5e5e2e;
     --list-even-bg-color: #42424245;
     --list-selectable-bg-hover-color: #1F2C3A;
@@ -213,6 +215,10 @@ canvas {
 
 .GlobalArea.Mobile .WorkArea .WindowHeader {
     height: 60px;
+}
+
+.GlobalArea.Mobile .WorkArea {
+    height: 100%;
 }
 
 .WorkArea .HeaderButtonsBlock {
@@ -811,6 +817,14 @@ canvas {
     padding-top: 20px !important;
 }
 
+.GlobalArea.Mobile .Scrolldata {
+    padding-bottom: 90px;
+}
+
+.GlobalArea.Mobile .Scrolldata .Scrolldata {
+    padding-bottom: 0;
+}
+
 .GlobalArea.Touch .Scrollbar-block {
     width: 6px;
     right: 0;
@@ -894,8 +908,13 @@ canvas {
 }
 
 .GlobalArea.Mobile .MainMenu {
-    height: 80px;
-    width: 100%;
+    width: calc(100% - 40px);
+    background-color: var(--mainmenu-mobile-bg-color);
+    position: absolute;
+    bottom: 10px;
+    backdrop-filter: blur(22px);
+    border-radius: 999px;
+    margin-left: 20px;
 }
 
 .GlobalArea.Mobile .MainMenu > .MainMenuItems {
@@ -904,6 +923,10 @@ canvas {
     margin-top: 0;
     padding: 0;
     font-size: 24px;
+}
+
+.GlobalArea.Mobile .MainMenu > .MainMenuItems > div {
+    padding: 20px 0;
 }
 
 .GlobalArea.Mobile .MainMenu .AppIconBlock {
@@ -1554,7 +1577,7 @@ input[type="checkbox"]:checked + .Toggle span:before {
     z-index: 1000;
     font-size: 12px;
     box-shadow: 0 0 3px #00000063;
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
 }
 
 .PopupMenu > ul {
