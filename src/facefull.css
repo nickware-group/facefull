@@ -287,11 +287,11 @@ canvas {
     margin-right: 4px;
 }
 
-.WindowControl:hover {
+.WindowControl:not(.GlobalArea.Touch *):hover {
     color: var(--windowheader-control-hover-color);
 }
 
-.WindowControl.Close:hover {
+.WindowControl.Close:not(.GlobalArea.Touch *):hover {
     color: var(--windowheader-controlclose-hover-color);
 }
 
@@ -389,7 +389,7 @@ canvas {
     margin-right: 20px;
 }
 
-.HeaderButton:hover {
+.HeaderButton:not(.GlobalArea.Touch *):not(.GlobalArea.Touch *):hover {
     background-color: var(--headerbutton-bg-hover-color);
 }
 
@@ -551,7 +551,7 @@ canvas {
     bottom: 0;
 }
 
-.Box.Subpage .Title .BackButton:hover {
+.Box.Subpage .Title .BackButton:not(.GlobalArea.Touch *):hover {
     color: var(--pagebackbutton-font-hover-color);
 }
 
@@ -749,7 +749,7 @@ canvas {
     font-family: "Material Design Icons", sans-serif;
 }
 
-.BoxTitle .Action:hover {
+.BoxTitle .Action:not(.GlobalArea.Touch *):hover {
     color: #aaa;
 }
 
@@ -802,7 +802,7 @@ canvas {
     transition: width 0.1s;
 }
 
-.Scrollbar-track:hover {
+.Scrollbar-track:not(.GlobalArea.Touch *):hover {
     width: 12px;
 }
 
@@ -892,7 +892,7 @@ canvas {
     box-sizing: border-box;
 }
 
-.MainMenu > .MainMenuItems > div:hover {
+.MainMenu > .MainMenuItems > div:not(.Active):not(.GlobalArea.Touch *):hover {
     /*background-color: #272C33;*/
     color: #5B6777;
 }
@@ -953,7 +953,7 @@ canvas {
     background-color: var(--main-component-bg-color);
 }
 
-.Button:not(.Disabled):hover {
+.Button:not(.Disabled):not(.Selected):not(.GlobalArea.Touch *):hover {
     background-color: var(--main-component-bg-hover-color);
 }
 
@@ -965,7 +965,7 @@ canvas {
     background-color: var(--button-highlighted-bg-color);
 }
 
-.Button.Highlighted:hover {
+.Button.Highlighted:not(.GlobalArea.Touch *):hover {
     background-color: var(--button-highlighted-bg-hover-color);
 }
 
@@ -1060,7 +1060,7 @@ input[type="checkbox"]:checked + .Checkbox:before, input[type="checkbox"]:not(:c
     transition: 0.3s;
 }
 
-input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:hover:before {
+input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:not(.GlobalArea.Touch *):hover:before {
     border: 1px solid var(--nw-blue-color);
 }
 
@@ -1180,11 +1180,11 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
     z-index: 10;
 }
 
-.Combobox.Disabled:hover {
+.Combobox.Disabled:not(.GlobalArea.Touch *):hover {
     outline: 1px solid #D7D7D7 !important;
 }
 
-.Combobox:hover {
+.Combobox:not(.GlobalArea.Touch *):hover {
     background-color: var(--main-component-bg-hover-color);
     outline: 1px solid var(--main-component-bg-hover-color);
 }
@@ -1219,7 +1219,7 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
     word-wrap: break-word;
 }
 
-.Combobox ul li:hover {
+.Combobox ul li:not(.GlobalArea.Touch *):hover {
     background-color: var(--main-component-bg-hover-color);
 }
 
@@ -1313,7 +1313,7 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
     right: 15px;
 }
 
-.Alert .Close:hover {
+.Alert .Close:not(.GlobalArea.Touch *):hover {
     color: var(--windowheader-controlclose-hover-color);
 }
 
@@ -1463,7 +1463,7 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
     color: var(--link-font-color);
 }
 
-.Link:hover {
+.Link:not(.GlobalArea.Touch *):hover {
     color: var(--link-font-hover-color);
 }
 
@@ -1610,7 +1610,7 @@ input[type="checkbox"]:checked + .Toggle span:before {
     color: var(--main-caution-color);
 }
 
-.PopupMenu > ul li:hover {
+.PopupMenu > ul li:not(.GlobalArea.Touch *):hover {
     /*background-color: #2a66a2;*/
     background-color: var(--main-component-bg-hover-color);
 }
@@ -1621,7 +1621,7 @@ input[type="checkbox"]:checked + .Toggle span:before {
     padding: 0;
 }
 
-.PopupMenu > ul li.Separator:hover {
+.PopupMenu > ul li.Separator:not(.GlobalArea.Touch *):hover {
     background-color: var(--main-component-disabled-bg-color);
 }
 
@@ -1667,7 +1667,7 @@ input[type="checkbox"]:checked + .Toggle span:before {
     opacity: 0.4;
 }
 
-.List.Selectable li:not(.Disabled):hover {
+.List.Selectable li:not(.Disabled):not(Selected):not(.GlobalArea.Touch *):hover {
     background-color: var(--list-selectable-bg-hover-color);
 }
 
@@ -1704,7 +1704,7 @@ input[type="checkbox"]:checked + .Toggle span:before {
     font-family: "Material Design Icons", sans-serif;
 }
 
-.List li > div.Action:hover {
+.List li > div.Action:not(.GlobalArea.Touch *):hover {
     color: #aaa;
 }
 
@@ -1919,7 +1919,7 @@ label.Search:before {
     padding-bottom: 10px;
 }
 
-.PulseBlock:hover {
+.PulseBlock:not(.GlobalArea.Touch *):hover {
     background-color: var(--main-component-bg-hover-color);
 }
 
@@ -2052,7 +2052,7 @@ label.Search:before {
     transition: 0.3s;
 }
 
-.Counter .CountBack:hover, .Counter .CountForward:hover {
+.Counter .CountBack:not(.GlobalArea.Touch *):hover, .Counter .CountForward:not(.GlobalArea.Touch *):hover {
     color: var(--main-font-disabled-color);
 }
 
