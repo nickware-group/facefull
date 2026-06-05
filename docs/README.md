@@ -1,5 +1,5 @@
 # Welcome to the Facefull API documentation!
-### Version 1.0.4
+### Version 1.2.0
 [web app demo page](https://nickware.group/repository/products/ff/demo)
 ## Including files
 ```html

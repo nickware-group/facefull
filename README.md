@@ -1,7 +1,7 @@
 <p align="center">
   <img width="600" height="200" src="https://nickware.group/repository/products/ff/logonew_t.png">
    <br>Facefull library
-   <br>1.0.4
+   <br>1.2.0
 </p>
 
 Simple and small cross-platform UI controls JS library.

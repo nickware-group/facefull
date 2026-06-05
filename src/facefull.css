@@ -87,9 +87,9 @@ TouchScrollBlockHorizontal
     --alert-bg-color: var(--nw-dark-color);
     --boxtitle-font-color: #888;
     --scrollbox-bg-color: #131313;
-    --scrollbar-bg-color: rgb(23, 23, 23);
+    --scrollbar-bg-color: rgb(30, 30, 30);
     --mainmenu-bg-color: #151617;
-    --mainmenu-mobile-bg-color: rgba(16, 16, 19, 0.83);
+    --mainmenu-mobile-bg-color: rgba(16, 16, 19, 0.75);
     --button-highlighted-bg-color: #2a618a;
     --button-highlighted-bg-hover-color: #224c71;
     --progressbar-bg-color: #8f8f8f;

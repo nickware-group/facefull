@@ -1876,8 +1876,13 @@ function DropArea(e) {
     this.eda.addEventListener('drop', bind(this.doDropCapture, this), false);
 }
 
-/*===================== Tabs =====================*/
+/*===================== TouchScrollBlockHorizontal =====================*/
 
+/**
+ * Touch horizontal scroll block element class. Just add `TouchScrollBlockHorizontal` classname to `div` block to make it scrollable with touch.
+ * @param e
+ * @constructor
+ */
 function TouchScrollBlockHorizontal(e) {
     this.e = e;
     this.touch_velocity = 0;
