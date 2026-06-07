@@ -933,7 +933,6 @@ canvas {
     display: none;
 }
 
-
 /*============================ Button ============================*/
 
 .Button {
@@ -953,7 +952,11 @@ canvas {
     background-color: var(--main-component-bg-color);
 }
 
-.Button:not(.Disabled):not(.Selected):not(.GlobalArea.Touch *):hover {
+.Button:not(.Disabled):not(.Selected):hover {
+    background-color: var(--main-component-bg-hover-color);
+}
+
+.Button:not(.GlobalArea.Touch *):hover {
     background-color: var(--main-component-bg-hover-color);
 }
 
@@ -1518,7 +1521,7 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
 .ToggleBlock.Disabled:before {
     content: "";
     width: 40px;
-    height: 20px;
+    height: 25px;
     position: absolute;
     z-index: 10;
 }
@@ -1628,8 +1631,7 @@ input[type="checkbox"]:checked + .Toggle span:before {
     color: var(--main-caution-color);
 }
 
-.PopupMenu > ul li:not(.GlobalArea.Touch *):hover {
-    /*background-color: #2a66a2;*/
+.PopupMenu:not(.Mobile) > ul li:hover {
     background-color: var(--main-component-bg-hover-color);
 }
 
