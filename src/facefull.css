@@ -84,7 +84,7 @@ TouchScrollBlockHorizontal
     --pagebackbutton-font-hover-color: #888;
     --panel-bg-color: #191919;
     --paneldashboard-bg-color: #191919;
-    --alert-bg-color: var(--nw-dark-color);
+    --alert-bg-color: rgba(30, 30, 30, 0.45);
     --boxtitle-font-color: #888;
     --scrollbox-bg-color: #131313;
     --scrollbar-bg-color: rgb(30, 30, 30);
@@ -1235,13 +1235,13 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
     height: 100%;
     z-index: 200;
     background-color: #000;
-    opacity: 0.8;
+    opacity: 0.4;
     display: none;
     top: 0;
 }
 
 .Overlay.MiddleOpacity {
-    opacity: 0.4;
+    opacity: 0.2;
 }
 
 /*============================ Alert ============================*/
@@ -1261,6 +1261,7 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
     transition: 0.2s;
     cursor: default;
     animation: alert-open .2s ease-in forwards;
+    backdrop-filter: blur(20px);
 }
 
 @keyframes alert-open {
@@ -1361,18 +1362,35 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
 }
 
 .Alert.Mobile {
+    max-width: 280px;
+    left: 40px;
+    right: 40px;
     width: auto;
-    left: 20px;
-    right: 20px;
+    height: 220px;
+    padding: 10px;
+}
+
+.Alert.Mobile .AlertCaption {
+    width: auto;
+}
+
+.Alert.Mobile .AlertText {
+    padding: 20px 15px;
 }
 
 .Alert.Mobile .AlertButtons {
-    flex-direction: column;
+    /*flex-direction: column;*/
     align-items: center;
+    width: 100%;
+    left: 0;
 }
 
 .Alert.Mobile .AlertButtons .Button {
     margin-bottom: 10px;
+    width: 100%;
+    display: inline-block;
+    background-color: transparent;
+    font-size: 15px;
 }
 
 /*============================ Progressbar ============================*/
