@@ -952,11 +952,7 @@ canvas {
     background-color: var(--main-component-bg-color);
 }
 
-.Button:not(.Disabled):not(.Selected):hover {
-    background-color: var(--main-component-bg-hover-color);
-}
-
-.Button:not(.GlobalArea.Touch *):hover {
+.Button:not(.Disabled):not(.Selected):not(.Highlighted):not(.GlobalArea.Touch *):hover {
     background-color: var(--main-component-bg-hover-color);
 }
 
@@ -1394,6 +1390,10 @@ input[type="checkbox"]:not(:checked):not(:indeterminate) + .Checkbox:after {
     display: inline-block;
     background-color: transparent;
     font-size: 15px;
+}
+
+.Alert.Mobile .AlertButtons .Button:hover {
+    background-color: transparent !important;
 }
 
 /*============================ Progressbar ============================*/
