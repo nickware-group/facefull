@@ -42,18 +42,16 @@ function fixEvent(e) {
 
 /**
  * Create main class.
- * @param native Set to true if you want to initialize window caption and control buttons for native application.
  */
-function facefullCreate(native = false) {
-    facefull = new Facefull(native);
+function facefullCreate() {
+    facefull = new Facefull();
 }
 
 /**
  * Main facefull class.
- * @param native
  * @constructor
  */
-function Facefull(native = false) {
+function Facefull() {
     /**
      * Subpages associative array. Use data-subpagename HTML tag to set element name.
      * @type {array}
@@ -127,7 +125,7 @@ function Facefull(native = false) {
     this.Themes = null;
     this.Viewports = null;
     this.Locales = null;
-    this.native = native;
+    this.bridge_mode = 'native';
 
     /**
      * Attaches an event handler to the bridge event name.
@@ -154,63 +152,85 @@ function Facefull(native = false) {
     }
 
     /**
-     * Sends event to the bridge. Uses title tag to pass event name and data across the bridge.
-     * For web applications (when Facefull works in non-native mode) `not_native_mode` is available. It provides the use of the bridge in
-     * `backend` mode (sends data via POST request, not_native_mode = {type: 'backend', event_ok: event_name_on_success, event_err: event_name_on_error}) or
-     * `local` mode (just runs event handler with `comm` name, not_native_mode = {type: 'local'}).
-     * @param comm
-     * @param data
-     * @param not_native_mode
+     * Sends event to the bridge. The behavior depends on the bridge mode. If the 'params' parameter is not specified, the current global bridge mode is used.
+     * @param comm Command to send to the bridge.
+     * @param data Data to send to the bridge.
+     * @param params {{type: string}} Example: {type: "backend", event_ok: "", event_err: ""}
+     * Available type:
+     * `native`: uses title tag to pass event name and data across the bridge. Default for `native` bridge mode.
+     * `electron`: uses embedded method 'window.facefull_bridge.send' to pass event name and data across the bridge. Default for `electron` bridge mode.
+     * `backend`: sends data via POST request. Additional params: {event_ok: event_name_on_success, event_err: event_name_on_error}. Default for `web` bridge mode.
+     * `local`: uses local event loop to run event handler.
      */
-    this.doEventSend = function(comm, data = "", not_native_mode = {type: "backend"}) {
-        if (this.native) {
-            document.title = "0";
-            setTimeout(function() {
-                document.title = comm+"|"+data;
-            }, 1);
-        } else {
-            if (!not_native_mode) return;
-            
-            switch (not_native_mode.type) {
-                case "backend":
-                {
-                    let sndr = new XMLHttpRequest();
-                    sndr.open("POST", "/bridge/"+comm+"/");
-                    sndr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+    this.doEventSend = function(comm, data = "", params = null) {
+        if (!params) {
+            switch (this.bridge_mode) {
+                default:
+                case "native":
+                    params = {type: "native"};
+                    break;
+                case "electron":
+                    params = {type: "electron"};
+                    break;
+                case "web":
+                    params = {type: "backend", event_ok: "", event_err: ""};
+            }
+        }
 
-                    if (not_native_mode.event_ok && not_native_mode.event_err) {
-                        sndr.onload = () => {
-                            if (sndr.status === 200) {
-                                facefull.doEventHandle(not_native_mode.event_ok, sndr.responseText);
-                            } else {
-                                console.log('Web bridge IO error', sndr.status, sndr.readyState);
-                                facefull.doEventHandle(not_native_mode.event_err);
-                            }
-                        };
+        switch (params.type) {
+            case "native":
+            {
+                document.title = "0";
+                setTimeout(function() {
+                    document.title = comm+"|"+data;
+                }, 1);
+                break;
+            }
 
-                        sndr.onerror = (e) => {
+            case "electron":
+            {
+                window.facefull_bridge.send(comm, data);
+                break;
+            }
+
+            case "backend":
+            {
+                let sndr = new XMLHttpRequest();
+                sndr.open("POST", "/bridge/"+comm+"/");
+                sndr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+
+                if (params.event_ok && params.event_err) {
+                    sndr.onload = () => {
+                        if (sndr.status === 200) {
+                            facefull.doEventHandle(params.event_ok, sndr.responseText);
+                        } else {
                             console.log('Web bridge IO error', sndr.status, sndr.readyState);
-                            facefull.doEventHandle(not_native_mode.event_err);
-                        };
-                    }
+                            facefull.doEventHandle(params.event_err);
+                        }
+                    };
 
-                    sndr.send(data);
-                    break;
+                    sndr.onerror = (e) => {
+                        console.log('Web bridge IO error', sndr.status, sndr.readyState);
+                        facefull.doEventHandle(params.event_err);
+                    };
                 }
-                
-                case "local":
-                {
-                    facefull.doEventHandle(comm, data);
-                    break;
-                }
+
+                sndr.send(data);
+                break;
+            }
+
+            case "local":
+            {
+                facefull.doEventHandle(comm, data);
+                break;
             }
         }
     }
 
     /**
      * Sends event to the bridge. Uses 'facefullio' script message handler to pass event name and data across the bridge.
-     * @param comm
-     * @param data
+     * @param comm Command to send to the bridge.
+     * @param data Data to send to the bridge.
      */
     this.doEventSendEx = function(comm, data = "") {
         window.facefullio.postMessage(comm+"|"+data)
@@ -315,7 +335,7 @@ function Facefull(native = false) {
     }
 
     /**
-     * Uodate scrollbars on all scrollboxes.
+     * Update scrollbars on all scrollboxes.
      */
     this.doUpdateAllScrollboxes = function() {
         for (let i in this.Scrollboxes) {
@@ -351,9 +371,17 @@ function Facefull(native = false) {
 
     /**
      * Starts Facefull initialization.
-     * @param disableContextmenu
+     * @param params Parameters list: 'mode': 'native'|'electron'|'web' (default: 'native'), 'disable_context_menu': true|false (default: false)
      */
-    this.doInit = function(disableContextmenu = false) {
+    this.doInit = function(params = {mode: 'native', disable_context_menu: false}) {
+        this.bridge_mode = params.mode;
+
+        if (this.bridge_mode === "electron") {
+            window.facefull_bridge.receive((message) => {
+                facefull.doEventHandle(message.command, message.data);
+            });
+        }
+
         let subpages = document.querySelectorAll(".Subpage");
         for (let i = 0; i < subpages.length; i++) {
             let did = subpages[i].getAttribute("data-subpagename");
@@ -451,15 +479,17 @@ function Facefull(native = false) {
 
         this.Locales = new LocaleManager();
 
-        if (this.native) {
-            if (disableContextmenu) {
+        if (this.bridge_mode === "native" || this.bridge_mode === "electron") {
+            if (params.disable_context_menu) {
                 document.addEventListener('contextmenu', function (event) {
                     event.preventDefault();
                     return false;
                 }, false);
             }
             this.doWindowHeaderInit();
-            
+        }
+
+        if (this.bridge_mode === "native") {
             this.doEventHandlerAttach("doConnectQtBridgeEventHandler", function () {
                 bridge.BridgeEventHandler.connect(function(command, data) {
                     setTimeout(function() {
@@ -471,11 +501,18 @@ function Facefull(native = false) {
     }
 
     /**
-     * Enable or disable native mode. Can be called before `doInit` method.
-     * @param enable {boolean}
+     * Change bridge mode.
+     * @param mode {string} Set bridge mode: 'native'|'electron'|'web' (default: 'native')
      */
-    this.setNative = function(enable) {
-        this.native = enable;
+    this.setBridgeMode = function(mode = "native") {
+        this.bridge_mode = mode;
+    }
+
+    /**
+     * Get bridge mode.
+     */
+    this.getBridgeMode = function() {
+        return this.bridge_mode;
     }
 
     /**
@@ -483,7 +520,7 @@ function Facefull(native = false) {
      * @returns {boolean}
      */
     this.isNative = function() {
-        return this.native;
+        return this.bridge_mode === "native";
     }
 }
 
@@ -2334,9 +2371,9 @@ function HotkeyHolder(e) {
                 this.onHotkeySet(this.hotkey);
             } else {
                 if (this.hotkey.mods.shift === this.modkeys.shift
-                        && this.hotkey.mods.ctrl === this.modkeys.ctrl
-                        && this.hotkey.mods.alt === this.modkeys.alt
-                        && this.hotkey.key === String.fromCharCode(key)) {
+                    && this.hotkey.mods.ctrl === this.modkeys.ctrl
+                    && this.hotkey.mods.alt === this.modkeys.alt
+                    && this.hotkey.key === String.fromCharCode(key)) {
                     this.onHotkey(this.hotkey);
                     event.preventDefault();
                 }
